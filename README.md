@@ -66,4 +66,11 @@ This is the skeleton of a MQTT URL
 #### `mqtt://host:port/path/to/api/call/@issuer`
 #### `mqtt://host:port/@issuer/message-id/`
 
+## Next steps
+* Use MqEmitter to better listen for requests
+* Improve scheme and API
+* Increase examples and tests
+* Write article
 
+---
+The code has tried to follow MQTT best practices as in http://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices
