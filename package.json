@@ -1,6 +1,6 @@
 {
   "name": "replyer",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Node.js MQTT client with built-in request and response methods",
   "main": "bin/replyer.js",
   "scripts": {
