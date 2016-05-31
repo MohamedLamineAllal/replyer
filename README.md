@@ -36,10 +36,10 @@ client.request('users', { alias: 'schroedinger' }, function (data) {
   console.log(data) // will be ['schroedinger']
 })
 
-client.on('users', function (data, packet) {
+client.on('users/#', function (data, reply) {
   console.log(data.alias) // 'schroedinger'
   // find users in database by alias...
-  packet.reply({ id: 1725, alias: 'schroedinger', avatar: 'icon.png' })
+  reply({ id: 1725, alias: 'schroedinger', avatar: 'icon.png' })
   client.end()
 })
 ```
