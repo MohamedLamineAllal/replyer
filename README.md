@@ -36,11 +36,10 @@ client.request('users', { alias: 'schroedinger' }, function (data) {
   console.log(data) // will be ['schroedinger']
 })
 
-client.on('users/#', function (data, reply) {
+client.on('users/#', function (data, topic) {
   console.log(data.alias) // 'schroedinger'
   // find users in database by alias...
-  reply({ id: 1725, alias: 'schroedinger', avatar: 'icon.png' })
-  client.end()
+  client.reply(topic, { status: '404 Not found' })
 })
 ```
 
@@ -51,26 +50,26 @@ It implements request and response with a similar API as in `socket.io` to ease 
 
 #### `@client-id/message-id`
 
-> The ‘at’ symbol identifies a message as a MQTT request: it has to be addressed only to that particular client. #msg-id is an optional parameter to ensure that a certain reply is for a very particular request. In usual conditions [we can count on this](http://stackoverflow.com/questions/30955110/is-message-order-preserved). Messages may get lost, for which timeouts are implemented. In case of a series of packets lost before a timeout, a client may interpret a wrong order, thus failing. So this little overhead for request/reply is really useful.
+> The ‘at’ symbol identifies a message as a MQTT request: it has to be addressed only to that particular client and request. #msg-id is an optional parameter to ensure that a certain reply is for a very particular request. Under some conditions [we can count on this](http://stackoverflow.com/questions/30955110/is-message-order-preserved) (qos > 0). Messages may get lost, for which timeouts are implemented. In case of a series of packets lost before a timeout, a client may interpret a wrong order, thus failing. So this little overhead for request/reply is really useful.
 
-Replyer requests must indicate –somehow– the `clientId`.
+Replyer requests must indicate –somehow– the `clientId` and the `messageId`. We have to take into account the the messageId parameter in the packet is not always mandatory (qos 0), so depending in `qos` for a request we have or have not to append it.
 
-#### `mqtt/api/path` + `@client-id`
+#### `mqtt/api/path` + `@client-id/message-id`
 
-This way we can know if it is part of replyer _protocol_ and if the field is not present, fallback to MQTT.
+On a request if `qos === 2` message id would never be necessary.
 
 ### MQTT URLs
 Now that we can make requests to an API and receive an answer on plain MQTT protocol, we could make use of HTTP URL scheme to indicate resources.
 
 This is the skeleton of a MQTT URL
-#### `mqtt://host:port/path/to/api/call/@issuer`
-#### `mqtt://host:port/@issuer/message-id/`
+#### `mqtt://host:port/path/to/api/call/@issuer/mid` as emitter URL
+#### `mqtt://host:port/@issuer/mid/` as listener URL
 
 ## Next steps
-* Use MqEmitter to better listen for requests
-* Improve scheme and API
-* Increase examples and tests
-* Write article
+* [ ] Use MqEmitter to better listen for requests
+* [ ] Improve scheme and API
+* [ ] Increase examples and tests
+* Write blog post
 
 ---
 The code has tried to follow MQTT best practices as in http://www.hivemq.com/blog/mqtt-essentials-part-5-mqtt-topics-best-practices

@@ -8,7 +8,7 @@ var client
 
 describe('Replyer', function () {
   before('client must connect to test server', function (done) {
-    client = replyer.connect('mqtt://test.mosca.io')
+    client = replyer.connect('mqtt://test.mosquitto.org')
     client.on('connect', () => done())
   })
 
@@ -16,7 +16,7 @@ describe('Replyer', function () {
     client.end()
   })
 
-  it('should emit event on subscribed topics 1/3', function (done) {
+  it('should emit event on subscribed topics', function (done) {
     client.on('replyer/test/@issuer', function reqHandler (data) {
       expect(data).to.equal('!')
       client.removeListener('replyer/test/@issuer', reqHandler)
@@ -41,5 +41,19 @@ describe('Replyer', function () {
       done()
     })
     client.request('replyer/test', { device: 'sensor' })
+  })
+
+  it('should be able to reply a request', function (done) {
+    client.on('replyer/test/#', function reqHandler (data, topic) {
+      expect(data.device).to.equal('sensor')
+      client.removeListener('replyer/test/#', reqHandler)
+      client.reply(topic, { status: 'OK' })
+    })
+
+    client.request('replyer/test', { device: 'sensor' }, function response (err, answer) {
+      if (err) throw err
+      expect(answer.status).to.equal('OK')
+      done()
+    })
   })
 })
